@@ -1,7 +1,9 @@
 package org.example.expert.domain.user.service;
 
 import lombok.RequiredArgsConstructor;
-import org.example.expert.config.PasswordEncoder;
+
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.example.expert.domain.common.exception.InvalidRequestException;
 import org.example.expert.domain.user.dto.request.UserChangePasswordRequest;
 import org.example.expert.domain.user.dto.response.UserResponse;
@@ -48,4 +50,14 @@ public class UserService {
             throw new InvalidRequestException("새 비밀번호는 8자 이상이어야 하고, 숫자와 대문자를 포함해야 합니다.");
         }
     }
+
+    @Cacheable(value = "userByNickname", key = "#nickname", unless = "#result == null")
+    public User getUserByNickname(String nickname) {
+        return userRepository.findByNickname(nickname)
+            .orElseThrow(() -> new IllegalArgumentException("사용자가 없습니다."));
+    }
+    // 쿼리 최적화
+    // DB관점에서 어떻게 하면 검색을 빠르게 할 수 있을 것인가?
+    // pk값을 설정하면 얻는 이점: 인덱싱!
+    // 조회를 할때 인덱싱이 되어 있지 않으면 풀 스캔(테이블 전체 조회) 인덱싱이 적용되면 검색에 최적화되게 수정가능 pk는 인덱싱이 되어 있음.
 }
