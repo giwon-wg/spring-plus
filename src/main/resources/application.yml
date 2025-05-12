@@ -30,6 +30,9 @@ spring:
       hibernate:
         format_sql: true
 
+  config:
+    import: optional:env[.env]
+
 server:
   port: 8080
 

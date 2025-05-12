@@ -1,11 +1,8 @@
 package org.example.expert.user;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.example.expert.domain.user.entity.User;
-import org.example.expert.domain.user.enums.UserRole;
-import org.example.expert.domain.user.repository.UserRepository;
+import com.example.domain.user.entity.User;
+import com.example.domain.user.enums.UserRole;
+import com.example.domain.user.repository.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

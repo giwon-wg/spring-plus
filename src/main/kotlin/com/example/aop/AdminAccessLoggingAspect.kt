@@ -1,30 +1,33 @@
-package org.example.expert.aop;
+package com.example.aop
 
-import jakarta.servlet.http.HttpServletRequest;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Before;
-import org.springframework.stereotype.Component;
+import jakarta.servlet.http.HttpServletRequest
+import mu.KotlinLogging
+import org.aspectj.lang.JoinPoint
+import org.aspectj.lang.annotation.Aspect
+import org.aspectj.lang.annotation.Before
+import org.springframework.stereotype.Component
+import org.springframework.web.context.request.RequestContextHolder
+import org.springframework.web.context.request.ServletRequestAttributes
+import java.time.LocalDateTime
 
-import java.time.LocalDateTime;
+private val logger = KotlinLogging.logger{}
 
-@Slf4j
 @Aspect
 @Component
-@RequiredArgsConstructor
-public class AdminAccessLoggingAspect {
+class AdminAccessLoggingAspect (
+    private val request: HttpServletRequest
+) {
 
-    private final HttpServletRequest request;
+    @Before("execution(* com.example.domain.user.controller.UserController.getUser(..))")
+    fun logAfterChangeUserRole(joinPoint: JoinPoint) {
+        val request = (RequestContextHolder.currentRequestAttributes() as ServletRequestAttributes).request
 
-    @Before("execution(* org.example.expert.domain.user.controller.UserController.getUser(..))")
-    public void logAfterChangeUserRole(JoinPoint joinPoint) {
-        String userId = String.valueOf(request.getAttribute("userId"));
-        String requestUrl = request.getRequestURI();
-        LocalDateTime requestTime = LocalDateTime.now();
+        val userId = request.getAttribute("userId")?.toString() ?: "unknown"
+        val requestUrl = request.requestURI
+        val requestTime = LocalDateTime.now()
 
-        log.info("Admin Access Log - User ID: {}, Request Time: {}, Request URL: {}, Method: {}",
-                userId, requestTime, requestUrl, joinPoint.getSignature().getName());
+        logger.info {
+            "Admin Access Log - userId=$userId, time=$requestTime, uri=$requestUrl, method=${joinPoint.signature.name}"
+        }
     }
 }

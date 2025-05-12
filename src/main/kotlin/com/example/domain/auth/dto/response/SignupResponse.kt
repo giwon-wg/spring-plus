@@ -1,13 +1,6 @@
-package org.example.expert.domain.auth.dto.response;
+package com.example.domain.auth.dto.response
 
-import lombok.Getter;
+data class SignupResponse(
 
-@Getter
-public class SignupResponse {
-
-    private final String bearerToken;
-
-    public SignupResponse(String bearerToken) {
-        this.bearerToken = bearerToken;
-    }
-}
+    val bearerToken: String
+)
